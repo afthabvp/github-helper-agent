@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Any
+from typing import Any, Optional, Union
 
 
 class TextPart(BaseModel):
@@ -14,13 +14,13 @@ class MessageContent(BaseModel):
 
 
 class MessageParams(BaseModel):
-    id: str
+    id: Optional[str] = None
     message: MessageContent
 
 
 class JsonRpcRequest(BaseModel):
     jsonrpc: str = "2.0"
-    id: int
+    id: Union[int, str]
     method: str
     params: MessageParams
 
@@ -40,7 +40,7 @@ class JsonRpcResult(BaseModel):
 
 class JsonRpcResponse(BaseModel):
     jsonrpc: str = "2.0"
-    id: int
+    id: Union[int, str]
     result: JsonRpcResult
 
 
@@ -51,5 +51,5 @@ class JsonRpcErrorDetail(BaseModel):
 
 class JsonRpcErrorResponse(BaseModel):
     jsonrpc: str = "2.0"
-    id: int
+    id: Union[int, str]
     error: JsonRpcErrorDetail

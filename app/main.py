@@ -22,12 +22,12 @@ async def health():
     return {"status": "ok"}
 
 
-@app.get("/.well-known/agent.json")
+@app.get("/.well-known/agent.json", dependencies=[Depends(verify_auth)])
 async def agent_card():
     return AGENT_CARD
 
 
-@app.post("/")
+@app.post("/", dependencies=[Depends(verify_auth)])
 async def json_rpc(request: Request):
     try:
         body = await request.json()

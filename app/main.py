@@ -27,7 +27,7 @@ async def agent_card():
     return AGENT_CARD
 
 
-@app.post("/", dependencies=[Depends(verify_auth)])
+@app.post("/")
 async def json_rpc(request: Request):
     try:
         body = await request.json()

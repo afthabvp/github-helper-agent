@@ -20,13 +20,17 @@ def error_response(request_id, code: int, message: str) -> dict:
     ).model_dump()
 
 
-def success_response(request_id, task_id: str, text: str) -> dict:
+def success_response(request_id, task_id: str, context_id: str, text: str) -> dict:
     return JsonRpcResponse(
         id=request_id,
         result=JsonRpcResult(
             id=task_id,
+            contextId=context_id,
             status=TaskStatus(state="completed"),
-            artifacts=[Artifact(parts=[ArtifactPart(type="text", text=text)])]
+            artifacts=[Artifact(
+                artifactId=str(uuid.uuid4()),
+                parts=[ArtifactPart(type="text", text=text)],
+            )]
         ),
     ).model_dump()
 
@@ -37,6 +41,7 @@ async def handle_rpc(request: JsonRpcRequest) -> dict:
 
     # Use task id from params if provided, otherwise generate one
     task_id = request.params.id or str(uuid.uuid4())
+    context_id = str(uuid.uuid4())
 
     # Extract text from message parts
     text_parts = [p.text for p in request.params.message.parts if p.type == "text"]
@@ -47,6 +52,6 @@ async def handle_rpc(request: JsonRpcRequest) -> dict:
 
     try:
         result = await llm_service.process_message(prompt)
-        return success_response(request.id, task_id, result)
+        return success_response(request.id, task_id, context_id, result)
     except Exception as e:
         return error_response(request.id, -32000, f"Server error: {e}")

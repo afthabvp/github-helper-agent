@@ -31,6 +31,7 @@ class ArtifactPart(BaseModel):
 
 
 class Artifact(BaseModel):
+    artifactId: str
     parts: list[ArtifactPart]
 
 
@@ -40,6 +41,7 @@ class TaskStatus(BaseModel):
 
 class JsonRpcResult(BaseModel):
     id: str
+    contextId: str
     status: TaskStatus = TaskStatus()
     artifacts: list[Artifact]
 

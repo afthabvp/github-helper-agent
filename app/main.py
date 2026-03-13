@@ -1,3 +1,4 @@
+import json
 import logging
 from fastapi import FastAPI, Depends, Request
 from fastapi.responses import JSONResponse
@@ -30,14 +31,15 @@ async def agent_card():
 async def json_rpc(request: Request):
     try:
         body = await request.json()
+        logger.info(f">>> REQUEST: {json.dumps(body, default=str)[:2000]}")
         rpc_request = JsonRpcRequest(**body)
     except Exception as e:
         logger.error(f"Invalid JSON-RPC request: {e}")
-        return JSONResponse(
-            content=error_response(0, -32700, f"Parse error: {e}"),
-            status_code=200,
-        )
+        resp = error_response(0, -32700, f"Parse error: {e}")
+        logger.info(f"<<< RESPONSE (error): {json.dumps(resp, default=str)[:2000]}")
+        return JSONResponse(content=resp, status_code=200)
 
     logger.info(f"RPC method={rpc_request.method} id={rpc_request.id}")
     result = await handle_rpc(rpc_request)
+    logger.info(f"<<< RESPONSE: {json.dumps(result, default=str)[:500]}")
     return JSONResponse(content=result, status_code=200)

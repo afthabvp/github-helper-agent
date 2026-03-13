@@ -35,8 +35,11 @@ def success_response(request_id, task_id: str, context_id: str, text: str) -> di
     ).model_dump()
 
 
+SUPPORTED_METHODS = {"message/send", "tasks/send"}
+
+
 async def handle_rpc(request: JsonRpcRequest) -> dict:
-    if request.method != "message/send":
+    if request.method not in SUPPORTED_METHODS:
         return error_response(request.id, -32601, f"Method not found: {request.method}")
 
     # Use task id from params if provided, otherwise generate one

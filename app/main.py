@@ -22,7 +22,7 @@ async def health():
     return {"status": "ok"}
 
 
-@app.get("/.well-known/agent.json", dependencies=[Depends(verify_auth)])
+@app.get("/.well-known/agent.json")
 async def agent_card():
     return AGENT_CARD
 

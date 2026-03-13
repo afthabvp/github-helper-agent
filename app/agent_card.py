@@ -5,6 +5,9 @@ AGENT_CARD = {
     "protocol": "a2a",
     "url": "https://github-helper-agent.onrender.com",
     "capabilities": {},
+    "authentication": {
+        "schemes": ["bearer"],
+    },
     "defaultInputModes": ["text"],
     "defaultOutputModes": ["text"],
     "skills": [
